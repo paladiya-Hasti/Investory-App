@@ -1,9 +1,12 @@
+
+
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProductContext } from "../context/ProductContext"; 
 
 const AdminPanel = () => {
-  const { products, setProducts } = useProductContext(); 
+  const { products, setProducts } = useProductContext();
   const [name, setName] = useState("");
   const [img, setImg] = useState("");
   const [price, setPrice] = useState("");
@@ -14,20 +17,24 @@ const AdminPanel = () => {
       try {
         const response = await fetch("https://dummyjson.com/products");
         const data = await response.json();
-        console.log(data); 
-        setProducts(data.products || []);
+        console.log("Fetched Data:", data); // Debug: Check the structure of the response
+        if (data && data.products) {
+          setProducts(data.products); // Ensure the products data is available
+        } else {
+          console.error("Products not found in the response");
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
-  
+
     fetchProducts();
   }, [setProducts]);
 
   const handleDelete = (id) => {
-    
     const updatedProducts = products.filter(product => product.id !== id);
-    setProducts(updatedProducts); 
+    setProducts(updatedProducts);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -81,7 +88,7 @@ const AdminPanel = () => {
       </div>
 
       {/* Product List */}
-      <div className="bg-white shadow-md rounded-lg p-8 ">
+      <div className="bg-white shadow-md rounded-lg p-8">
         <h2 className="text-2xl font-bold mb-6">Product List</h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {Array.isArray(products) && products.length > 0 ? (
@@ -117,6 +124,5 @@ const AdminPanel = () => {
     </div>
   );
 };
-}
 
-export default AdminPanel
+export default AdminPanel;
